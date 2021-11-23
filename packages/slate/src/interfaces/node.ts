@@ -300,7 +300,15 @@ export const Node: NodeInterface = {
         pass: ([, path]) => !Range.includes(range, path),
       })
 
-      for (const [, path] of nodeEntries) {
+      for (const [node, path] of nodeEntries) {
+        if (Element.isElement(node)) {
+          // set to true by default
+          node.isFullCopy = true
+        }
+
+        const textBefore = Array.from(Node.texts(node))
+          .map(([n]) => n.text)
+          .join('')
         if (!Range.includes(range, path)) {
           const parent = Node.parent(r, path)
           const index = path[path.length - 1]
@@ -315,6 +323,17 @@ export const Node: NodeInterface = {
         if (Path.equals(path, start.path)) {
           const leaf = Node.leaf(r, path)
           leaf.text = leaf.text.slice(start.offset)
+        }
+
+        const textAfter = Array.from(Node.texts(node))
+          .map(([n]) => n.text)
+          .join('')
+
+        if (Text.isText(node)) {
+          const parent = Node.parent(r, path)
+          if (Element.isElement(parent)) {
+            parent.isFullCopy = parent.isFullCopy && textBefore === textAfter
+          }
         }
       }
 

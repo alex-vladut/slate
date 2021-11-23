@@ -9,6 +9,7 @@ import { Editor, Node, Path, Descendant, ExtendedType, Ancestor } from '..'
 
 export interface BaseElement {
   children: Descendant[]
+  isFullCopy?: boolean
 }
 
 export type Element = ExtendedType<'Element', BaseElement>
